@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>The Little Bridge in the Forest 🌿</title>
+<style>
+/* ============================================
+   CSS VARIABLES & THEME
+   ============================================ */
+:root {
+  --forest-dark: #1a3a1a;
+  --forest-mid: #2d5a2d;
+  --forest-light: #4a8a4a;
+  --forest-glow: #7bc67b;
+  --sky-top: #87CEEB;
+  --sky-bottom: #c8e6f5;
+  --sunset-orange: #ff7e47;
+  --sunset-pink: #ff6b9d;
+  --sunset-gold: #ffd700;
+  --water-blue: #4fc3f7;
+  --water-dark: #0288d1;
+  --bridge-brown: #8B6914;
+  --bridge-light: #c49a3c;
+  --pippa-pink: #ffb6c1;
+  --pippa-dark: #e8939e;
+  --rory-cream: #f5e6d3;
+  --bram-brown: #8B4513;
+  --cass-black: #2c2c2c;
+  --warm-white: #fff8f0;
+  --warm-cream: #fef3e2;
+  --golden: #f0c040;
+  --heart-red: #e74c3c;
+  --leaf-green: #27ae60;
+  --soft-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  --glow-shadow: 0 0 30px rgba(255,215,0,0.3);
+  --font-story: 'Nunito', 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+  --font-title: 'Bubblegum Sans', 'Comic Sans MS', cursive;
+  --font-dyslexia: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
+  --radius: 20px;
+  --radius-lg: 30px;
+}
+
+/* ============================================
+   FONT IMPORTS
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Bubblegum+Sans&display=swap');
+
+/* ============================================
+   RESET & BASE
+   ============================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; overflow: hidden; height: 100%; }
+body {
+  font-family: var(--font-story);
+  background: var(--forest-dark);
+  color: #3a2a1a;
+  overflow: hidden;
+  height: 100%;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+body.dyslexia-mode { font-family: var(--font-dyslexia) !important; }
+body.dyslexia-mode * { font-family: var(--font-dyslexia) !important; letter-spacing: 0.05em; line-height: 1.8 !important; }
+body.large-text .story-text { font-size: 1.6rem !important; }
+body.large-text .dialogue { font-size: 1.5rem !important; }
+
+/* ============================================
+   LOADING SCREEN
+   ============================================ */
+#loading-screen {
+  position: fixed; inset: 0; z-index: 10000;
+  background: linear-gradient(135deg, #1a3a1a 0%, #2d5a2d 50%, #1a4a2a 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity 0.8s ease;
+}
+#loading-screen.hidden { opacity: 0; pointer-events: none; }
+.loading-title {
+  font-family: var(--font-title);
+  font-size: 2.5rem; color: var(--golden);
+  text-shadow: 0 0 30px rgba(255,215,0,0.5);
+  margin-bottom: 30px; text-align: center; padding: 0 20px;
+}
+.loading-forest {
+  width: 200px; height: 100px; position: relative; margin-bottom: 30px;
+}
+.loading-tree {
+  position: absolute; bottom: 0;
+}
+.loading-tree .trunk { width: 8px; background: #5a3a1a; border-radius: 2px; margin: 0 auto; }
+.loading-tree .canopy { border-radius: 50%; background: #2d7a2d; }
+.loading-tree:nth-child(1) { left: 20px; }
+.loading-tree:nth-child(1) .trunk { height: 25px; }
+.loading-tree:nth-child(1) .canopy { width: 40px; height: 35px; }
+.loading-tree:nth-child(2) { left: 80px; }
+.loading-tree:nth-child(2) .trunk { height: 35px; }
+.loading-tree:nth-child(2) .canopy { width: 50px; height: 45px; background: #1d6a1d; }
+.loading-tree:nth-child(3) { left: 140px; }
+.loading-tree:nth-child(3) .trunk { height: 20px; }
+.loading-tree:nth-child(3) .canopy { width: 35px; height: 30px; background: #3d8a3d; }
+.loading-bar-container {
+  width: 250px; height: 12px; background: rgba(255,255,255,0.15);
+  border-radius: 10px; overflow: hidden;
+}
+.loading-bar {
+  height: 100%; width: 0%; background: linear-gradient(90deg, var(--golden), var(--sunset-orange));
+  border-radius: 10px; transition: width 0.3s ease;
+}
+.loading-text { color: rgba(255,255,255,0.6); margin-top: 15px; font-size: 0.9rem; }
+
+/* ============================================
+   MAIN MENU / TITLE SCREEN
+   ============================================ */
+#title-screen {
+  position: fixed; inset: 0; z-index: 9000;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.title-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 40%, var(--forest-light) 70%, var(--forest-dark) 100%);
+}
+.title-bg-trees {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 45%;
+  background: linear-gradient(180deg, transparent 0%, var(--forest-dark) 60%);
+}
+.title-content {
+  position: relative; z-index: 2; text-align: center; padding: 20px;
+}
+.book-icon {
+  font-size: 5rem; margin-bottom: 10px;
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+}
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+.main-title {
+  font-family: var(--font-title);
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  color: var(--golden);
+  text-shadow: 0 3px 10px rgba(0,0,0,0.3), 0 0 40px rgba(255,215,0,0.3);
+  margin-bottom: 8px; line-height: 1.2;
+}
+.main-subtitle {
+  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 40px; font-weight: 600;
+}
+.menu-buttons { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+.menu-btn {
+  font-family: var(--font-story);
+  font-size: 1.2rem; font-weight: 700;
+  padding: 18px 50px; border: none; border-radius: 50px;
+  cursor: pointer; transition: all 0.3s ease;
+  min-width: 280px; position: relative; overflow: hidden;
+}
+.menu-btn::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+  border-radius: 50px;
+}
+.menu-btn:hover { transform: scale(1.05); }
+.menu-btn:active { transform: scale(0.97); }
+.btn-read-to-me {
+  background: linear-gradient(135deg, #ff9a56, #ff6b35);
+  color: white; box-shadow: 0 6px 25px rgba(255,107,53,0.4);
+}
+.btn-read-myself {
+  background: linear-gradient(135deg, #56c8ff, #3498db);
+  color: white; box-shadow: 0 6px 25px rgba(52,152,219,0.4);
+}
+.btn-settings-menu {
+  background: rgba(255,255,255,0.15); color: white;
+  border: 2px solid rgba(255,255,255,0.3);
+  font-size: 1rem; padding: 14px 40px;
+}
+.title-characters {
+  position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%);
+  font-size: 4rem; display: flex; gap: 15px; z-index: 2;
+}
+.title-characters span {
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+}
+.title-characters span:nth-child(2) { animation-delay: 0.5s; }
+.title-characters span:nth-child(3) { animation-delay: 1s; }
+.title-characters span:nth-child(4) { animation-delay: 1.5s; }
+
+/* Floating elements on title */
+.title-leaf {
+  position: absolute; font-size: 1.5rem; opacity: 0.6; z-index: 1;
+  animation: leafFall linear infinite;
+}
+@keyframes leafFall {
+  0% { transform: translateY(-100px) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(calc(100vh + 50px)) rotate(720deg); opacity: 0; }
+}
+
+/* ============================================
+   SETTINGS PANEL
+   ============================================ */
+#settings-panel {
+  position: fixed; inset: 0; z-index: 9500;
+  background: rgba(0,0,0,0.7); display: none;
+  align-items: center; justify-content: center;
+  backdrop-filter: blur(5px);
+}
+#settings-panel.show { display: flex; }
+.settings-card {
+  background: var(--warm-cream); border-radius: var(--radius-lg);
+  padding: 35px; max-width: 420px; width: 90%; max-height: 80vh;
+  overflow-y: auto; box-shadow: var(--soft-shadow);
+}
+.settings-title {
+  font-family: var(--font-title); font-size: 1.8rem;
+  color: var(--forest-dark); text-align: center; margin-bottom: 25px;
+}
+.setting-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+.setting-label { font-weight: 700; font-size: 1rem; color: #4a3a2a; }
+.toggle-switch {
+  width: 52px; height: 28px; background: #ccc; border-radius: 14px;
+  position: relative; cursor: pointer; transition: background 0.3s;
+  border: none;
+}
+.toggle-switch.on { background: var(--leaf-green); }
+.toggle-switch::after {
+  content: ''; position: absolute; width: 22px; height: 22px;
+  background: white; border-radius: 50%; top: 3px; left: 3px;
+  transition: transform 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.toggle-switch.on::after { transform: translateX(24px); }
+.settings-close {
+  display: block; margin: 25px auto 0; padding: 14px 50px;
+  background: var(--forest-mid); color: white; border: none;
+  border-radius: 50px; font-size: 1.1rem; font-weight: 700;
+  cursor: pointer; font-family: var(--font-story);
+}
+
+/* ============================================
+   STORY CONTAINER
+   ============================================ */
+#story-container {
+  position: fixed; inset: 0; display: none;
+  overflow: hidden;
+}
+#story-container.active { display: block; }
+
+/* ============================================
+   SCENE BACKGROUND LAYERS
+   ============================================ */
+.scene-bg {
+  position: absolute; inset: 0; transition: opacity 1s ease;
+}
+
+/* ============================================
+   PARALLAX FOREST BACKGROUND (CSS-drawn)
+   ============================================ */
+.forest-bg {
+  position: absolute; inset: 0; overflow: hidden;
+}
+.sky-layer {
+  position: absolute; inset: 0;
+  transition: background 2s ease;
+}
+.sky-day {
+  background: linear-gradient(180deg, #87CEEB 0%, #b8e4f9 40%, #d4efc7 100%);
+}
+.sky-sunset {
+  background: linear-gradient(180deg, #1a0533 0%, #6b2fa0 20%, #e8573a 50%, #ffa751 70%, #ffd700 100%);
+}
+.cloud {
+  position: absolute; background: rgba(255,255,255,0.8);
+  border-radius: 50px; animation: cloudDrift linear infinite;
+}
+.cloud::before, .cloud::after {
+  content: ''; position: absolute; background: inherit; border-radius: 50%;
+}
+.cloud-1 { width: 120px; height: 40px; top: 8%; animation-duration: 45s; }
+.cloud-1::before { width: 50px; height: 50px; top: -25px; left: 20px; }
+.cloud-1::after { width: 70px; height: 45px; top: -20px; left: 50px; }
+.cloud-2 { width: 90px; height: 30px; top: 15%; animation-duration: 60s; animation-delay: -20s; }
+.cloud-2::before { width: 40px; height: 40px; top: -20px; left: 15px; }
+.cloud-2::after { width: 55px; height: 35px; top: -15px; left: 35px; }
+.cloud-3 { width: 100px; height: 35px; top: 5%; animation-duration: 55s; animation-delay: -35s; }
+.cloud-3::before { width: 45px; height: 45px; top: -22px; left: 18px; }
+.cloud-3::after { width: 60px; height: 40px; top: -18px; left: 42px; }
+@keyframes cloudDrift {
+  0% { transform: translateX(-200px); }
+  100% { transform: translateX(calc(100vw + 200px)); }
+}
+
+/* Mountains / Hills */
+.hills-back {
+  position: absolute; bottom: 25%; left: 0; right: 0; height: 35%;
+  background: #3a6b3a; border-radius: 60% 80% 0 0 / 100% 100% 0 0;
+  opacity: 0.6;
+}
+.hills-front {
+  position: absolute; bottom: 20%; left: -5%; right: -5%; height: 30%;
+  background: #2d5a2d; border-radius: 50% 70% 0 0 / 100% 100% 0 0;
+}
+
+/* Trees layer */
+.tree-layer {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 55%;
+}
+.css-tree {
+  position: absolute; bottom: 0;
+}
+.css-tree .trunk-el {
+  width: 14px; background: linear-gradient(90deg, #5a3a1a, #7a5a3a, #5a3a1a);
+  border-radius: 3px; margin: 0 auto;
+}
+.css-tree .canopy-el {
+  border-radius: 50%; position: relative;
+}
+.css-tree .canopy-el::after {
+  content: ''; position: absolute; inset: 5px;
+  background: rgba(255,255,255,0.08); border-radius: 50%;
+}
+
+/* Ground */
+.ground-layer {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 22%;
+  background: linear-gradient(180deg, #3a7a3a 0%, #2a5a2a 40%, #1a3a1a 100%);
+}
+.grass-blade {
+  position: absolute; bottom: 0; width: 4px; background: #4a9a4a;
+  border-radius: 2px 2px 0 0; transform-origin: bottom center;
+  animation: grassSway 3s ease-in-out infinite;
+}
+@keyframes grassSway {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+/* River */
+.river {
+  position: absolute; bottom: 10%; left: 0; right: 0; height: 8%;
+  background: linear-gradient(180deg, rgba(79,195,247,0.7), rgba(2,136,209,0.8));
+  overflow: hidden;
+}
+.river-shimmer {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent, transparent 40px,
+    rgba(255,255,255,0.15) 40px, rgba(255,255,255,0.15) 42px
+  );
+  animation: riverFlow 4s linear infinite;
+}
+@keyframes riverFlow { 0% { transform: translateX(0); } 100% { transform: translateX(42px); } }
+
+/* Bridge */
+.bridge-structure {
+  position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%);
+  width: 220px; height: 60px;
+}
+.bridge-deck {
+  position: absolute; bottom: 0; width: 100%; height: 14px;
+  background: linear-gradient(90deg, var(--bridge-brown), var(--bridge-light), var(--bridge-brown));
+  border-radius: 3px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+}
+.bridge-rail {
+  position: absolute; bottom: 14px; width: 100%; height: 35px;
+  border: 3px solid var(--bridge-brown); border-bottom: none;
+  border-radius: 5px 5px 0 0;
+}
+.bridge-post {
+  position: absolute; bottom: 0; width: 8px; height: 48px;
+  background: var(--bridge-brown); border-radius: 2px;
+}
+.bridge-post:nth-child(1) { left: 0; }
+.bridge-post:nth-child(2) { left: 25%; }
+.bridge-post:nth-child(3) { left: 50%; }
+.bridge-post:nth-child(4) { left: 75%; }
+.bridge-post:nth-child(5) { right: 0; }
+
+/* Floating leaves */
+.floating-leaf {
+  position: absolute; z-index: 5; pointer-events: none;
+  animation: leafFloat linear infinite;
+}
+@keyframes leafFloat {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  5% { opacity: 0.8; }
+  95% { opacity: 0.8; }
+  100% { transform: translate(var(--leaf-dx, 100px), var(--leaf-dy, 300px)) rotate(var(--leaf-rot, 360deg)); opacity: 0; }
+}
+
+/* Fireflies */
+.firefly {
+  position: absolute; width: 6px; height: 6px;
+  background: var(--golden); border-radius: 50%;
+  box-shadow: 0 0 12px var(--golden), 0 0 25px rgba(255,215,0,0.5);
+  animation: fireflyGlow 4s ease-in-out infinite;
+  z-index: 5; pointer-events: none;
+}
+@keyframes fireflyGlow {
+  0%, 100% { opacity: 0; transform: translate(0, 0); }
+  20% { opacity: 1; }
+  50% { opacity: 0.6; transform: translate(20px, -30px); }
+  80% { opacity: 1; transform: translate(-10px, -50px); }
+}
+
+/* ============================================
+   CHARACTER SPRITES (CSS-drawn emoji style)
+   ============================================ */
+.character {
+  position: absolute; font-size: 4rem; z-index: 10;
+  filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+  transition: all 1s ease;
+}
+.char-bounce { animation: charBounce 2s ease-in-out infinite; }
+@keyframes charBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+.char-talk { animation: charTalk 0.4s ease-in-out infinite alternate; }
+@keyframes charTalk { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
+
+/* ============================================
+   SCENE ILLUSTRATION AREA (SVG-based scenes)
+   ============================================ */
+.scene-illustration {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.scene-svg-container {
+  position: absolute; inset: 0;
+}
+
+/* ============================================
+   STORY TEXT PANEL
+   ============================================ */
+.text-panel {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(20,15,10,0.75) 25%, rgba(20,15,10,0.92) 100%);
+  padding: 50px 30px 30px;
+  z-index: 20;
+}
+.story-text {
+  font-size: 1.3rem; line-height: 1.7;
+  color: var(--warm-white); text-align: center;
+  max-width: 700px; margin: 0 auto;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  font-weight: 600;
+}
+.story-text .highlight-word {
+  transition: color 0.15s, background 0.15s;
+  border-radius: 4px; padding: 0 2px;
+}
+.story-text .highlight-word.active {
+  color: var(--golden);
+  background: rgba(255,215,0,0.15);
+}
+.dialogue {
+  font-style: italic; color: #ffeaa7;
+  font-size: 1.25rem;
+}
+.speaker-name {
+  font-weight: 900; font-style: normal;
+  display: inline-block; margin-right: 5px;
+}
+.speaker-pippa { color: var(--pippa-pink); }
+.speaker-rory { color: #7fdbff; }
+.speaker-bram { color: #c19a6b; }
+.speaker-cass { color: #b0b0b0; }
+
+/* Scene number indicator */
+.scene-indicator {
+  position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 8px; z-index: 25;
+}
+.scene-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: rgba(255,255,255,0.3); transition: all 0.4s;
+  border: 2px solid rgba(255,255,255,0.2);
+}
+.scene-dot.active {
+  background: var(--golden); width: 30px; border-radius: 6px;
+  border-color: var(--golden);
+  box-shadow: 0 0 10px rgba(255,215,0,0.5);
+}
+.scene-dot.completed { background: rgba(255,215,0,0.5); border-color: rgba(255,215,0,0.4); }
+
+/* ============================================
+   NAVIGATION CONTROLS
+   ============================================ */
+.nav-controls {
+  position: absolute; bottom: 25px; left: 0; right: 0;
+  display: flex; justify-content: center; gap: 15px;
+  z-index: 30; padding: 0 20px;
+}
+.nav-btn {
+  font-family: var(--font-story); font-size: 1rem; font-weight: 700;
+  padding: 14px 35px; border: none; border-radius: 50px;
+  cursor: pointer; transition: all 0.3s ease;
+  display: flex; align-items: center; gap: 8px;
+}
+.nav-btn:hover { transform: scale(1.05); }
+.nav-btn:active { transform: scale(0.95); }
+.btn-back {
+  background: rgba(255,255,255,0.2); color: white;
+  backdrop-filter: blur(5px);
+}
+.btn-next {
+  background: linear-gradient(135deg, var(--golden), var(--sunset-orange));
+  color: white; box-shadow: 0 4px 20px rgba(255,160,0,0.4);
+}
+
+/* ============================================
+   TOP CONTROLS BAR
+   ============================================ */
+.top-controls {
+  position: absolute; top: 15px; right: 15px;
+  display: flex; gap: 10px; z-index: 30;
+}
+.ctrl-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(0,0,0,0.35); color: white;
+  border: 2px solid rgba(255,255,255,0.2);
+  font-size: 1.2rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s; backdrop-filter: blur(5px);
+}
+.ctrl-btn:hover { background: rgba(0,0,0,0.5); transform: scale(1.1); }
+.ctrl-btn.active { background: var(--golden); color: #333; border-color: var(--golden); }
+
+/* Narration controls */
+.narration-controls {
+  position: absolute; top: 15px; left: 15px;
+  display: flex; gap: 10px; z-index: 30;
+}
+
+/* ============================================
+   SCENE TRANSITIONS
+   ============================================ */
+.scene {
+  position: absolute; inset: 0;
+  opacity: 0; pointer-events: none;
+  transition: opacity 1.2s ease;
+}
+.scene.active { opacity: 1; pointer-events: auto; }
+
+/* ============================================
+   QUIZ SECTION
+   ============================================ */
+#quiz-section {
+  position: fixed; inset: 0; z-index: 8000;
+  display: none; overflow-y: auto;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+}
+#quiz-section.active { display: block; }
+.quiz-container {
+  max-width: 600px; margin: 0 auto; padding: 30px 20px;
+  min-height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.quiz-card {
+  background: rgba(255,255,255,0.95); border-radius: var(--radius-lg);
+  padding: 35px 30px; width: 100%; box-shadow: var(--soft-shadow);
+  text-align: center; animation: fadeInUp 0.6s ease;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.quiz-question-number {
+  font-family: var(--font-title); font-size: 1rem;
+  color: #764ba2; margin-bottom: 10px;
+}
+.quiz-question {
+  font-size: 1.3rem; font-weight: 700; color: #2d1b4e;
+  margin-bottom: 25px; line-height: 1.5;
+}
+.quiz-emoji { font-size: 3rem; margin-bottom: 15px; }
+.quiz-options { display: flex; flex-direction: column; gap: 12px; }
+.quiz-option {
+  font-family: var(--font-story); font-size: 1.1rem; font-weight: 700;
+  padding: 16px 24px; border: 3px solid #e0d4f5;
+  border-radius: 16px; background: white; cursor: pointer;
+  transition: all 0.3s; color: #4a3a6a;
+}
+.quiz-option:hover { border-color: #764ba2; background: #f5f0ff; transform: scale(1.02); }
+.quiz-option.correct {
+  border-color: var(--leaf-green); background: #e8fce8;
+  color: var(--forest-dark); animation: correctPulse 0.5s ease;
+}
+@keyframes correctPulse { 50% { transform: scale(1.05); } }
+.quiz-option.also-ok {
+  border-color: #56c8ff; background: #e8f6ff; color: #1a5a8a;
+}
+.quiz-feedback {
+  margin-top: 20px; padding: 15px; border-radius: 16px;
+  font-size: 1.1rem; font-weight: 600; animation: fadeInUp 0.4s ease;
+}
+.quiz-feedback.positive { background: #e8fce8; color: #1a5a1a; }
+.quiz-next-btn {
+  font-family: var(--font-story); font-size: 1.1rem; font-weight: 700;
+  padding: 14px 40px; background: linear-gradient(135deg, #764ba2, #f093fb);
+  color: white; border: none; border-radius: 50px;
+  cursor: pointer; margin-top: 20px; transition: all 0.3s;
+}
+.quiz-next-btn:hover { transform: scale(1.05); }
+
+/* Reward screen */
+.reward-screen {
+  text-align: center; padding: 40px 20px;
+}
+.reward-stars { font-size: 3rem; margin-bottom: 20px; animation: float 2s ease-in-out infinite; }
+.reward-title {
+  font-family: var(--font-title); font-size: 2rem;
+  color: var(--golden); text-shadow: 0 0 20px rgba(255,215,0,0.5);
+  margin-bottom: 15px;
+}
+.reward-message { font-size: 1.2rem; color: rgba(255,255,255,0.9); line-height: 1.6; margin-bottom: 30px; }
+.reward-hearts { font-size: 2rem; margin-bottom: 25px; }
+.reward-btn {
+  font-family: var(--font-story); font-size: 1.1rem; font-weight: 700;
+  padding: 16px 50px; background: linear-gradient(135deg, var(--golden), var(--sunset-orange));
+  color: white; border: none; border-radius: 50px;
+  cursor: pointer; transition: all 0.3s;
+}
+
+/* ============================================
+   MORAL SECTION
+   ============================================ */
+.moral-overlay {
+  position: fixed; inset: 0; z-index: 7500;
+  display: none; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.moral-overlay.active { display: flex; }
+.moral-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, #1a0533 0%, #3a1560 20%, #e8573a 55%, #ffa751 75%, #ffd700 100%);
+}
+.moral-stars {
+  position: absolute; inset: 0;
+}
+.moral-star {
+  position: absolute; font-size: 1.2rem;
+  animation: starTwinkle 3s ease-in-out infinite;
+}
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+.moral-card {
+  position: relative; z-index: 2;
+  background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg); padding: 40px 35px;
+  max-width: 500px; width: 90%; text-align: center;
+  border: 2px solid rgba(255,255,255,0.2);
+}
+.moral-heart { font-size: 3rem; margin-bottom: 15px; animation: float 2s ease-in-out infinite; }
+.moral-text {
+  font-family: var(--font-title); font-size: clamp(1.3rem, 4vw, 1.8rem);
+  color: white; line-height: 1.5;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+.moral-continue-btn {
+  font-family: var(--font-story); margin-top: 30px;
+  padding: 14px 45px; background: linear-gradient(135deg, var(--golden), var(--sunset-orange));
+  color: white; border: none; border-radius: 50px;
+  font-size: 1.1rem; font-weight: 700; cursor: pointer;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 600px) {
+  .story-text { font-size: 1.1rem; }
+  .text-panel { padding: 40px 15px 20px; }
+  .nav-btn { padding: 12px 25px; font-size: 0.9rem; }
+  .menu-btn { min-width: 240px; padding: 15px 40px; font-size: 1.05rem; }
+  .scene-dot { width: 8px; height: 8px; }
+  .scene-dot.active { width: 22px; }
+  .character { font-size: 3rem; }
+  .bridge-structure { width: 160px; }
+}
+
+/* ============================================
+   ANIMATIONS LIBRARY
+   ============================================ */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scaleIn { from { transform: scale(0); } to { transform: scale(1); } }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 5px var(--golden); } 50% { box-shadow: 0 0 25px var(--golden), 0 0 50px rgba(255,215,0,0.3); } }
+@keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+@keyframes walkRight { 0% { transform: translateX(-100px); } 100% { transform: translateX(0); } }
+.anim-fade { animation: fadeIn 1s ease; }
+.anim-slide-up { animation: slideUp 0.8s ease; }
+.anim-glow { animation: glow 2s ease-in-out infinite; }
+.anim-heartbeat { animation: heartbeat 1.5s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     LOADING SCREEN
+     ============================================ -->
+<div id="loading-screen">
+  <div class="loading-title">🌿 Loading your story...</div>
+  <div class="loading-forest">
+    <div class="loading-tree"><div class="canopy-el" style="width:40px;height:35px;background:#2d7a2d;border-radius:50%;"></div><div class="trunk-el" style="width:8px;height:25px;background:#5a3a1a;border-radius:2px;margin:0 auto;"></div></div>
+  </div>
+  <div class="loading-bar-container"><div class="loading-bar" id="loading-bar"></div></div>
+  <div class="loading-text">Preparing the forest...</div>
+</div>
+
+<!-- ============================================
+     TITLE SCREEN
+     ============================================ -->
+<div id="title-screen" style="display:none;">
+  <div class="title-bg"></div>
+  <div class="title-bg-trees"></div>
+  <!-- Floating leaves -->
+  <div class="title-leaf" style="left:10%;font-size:1.8rem;animation-duration:12s;">🍃</div>
+  <div class="title-leaf" style="left:30%;font-size:1.2rem;animation-duration:15s;animation-delay:-3s;">🍂</div>
+  <div class="title-leaf" style="left:60%;font-size:1.5rem;animation-duration:18s;animation-delay:-7s;">🍃</div>
+  <div class="title-leaf" style="left:80%;font-size:1rem;animation-duration:14s;animation-delay:-5s;">🍂</div>
+  <div class="title-leaf" style="left:45%;font-size:1.6rem;animation-duration:16s;animation-delay:-10s;">🍃</div>
+
+  <div class="title-content">
+    <div class="book-icon">📖</div>
+    <h1 class="main-title">The Little Bridge<br>in the Forest</h1>
+    <p class="main-subtitle">A story about kindness, courage, and being brave</p>
+    <div class="menu-buttons">
+      <button class="menu-btn btn-read-to-me" onclick="startStory('readToMe')">🔊 Read To Me</button>
+      <button class="menu-btn btn-read-myself" onclick="startStory('readMyself')">📖 Read By Myself</button>
+      <button class="menu-btn btn-settings-menu" onclick="toggleSettings()">⚙️ Settings</button>
+    </div>
+  </div>
+  <div class="title-characters">
+    <span>🐷</span><span>🐰</span><span>🐻</span><span>🐦‍⬛</span>
+  </div>
+</div>
+
+<!-- ============================================
+     SETTINGS PANEL
+     ============================================ -->
+<div id="settings-panel">
+  <div class="settings-card">
+    <h2 class="settings-title">⚙️ Settings</h2>
+    <div class="setting-row">
+      <span class="setting-label">🔤 Dyslexia-Friendly Font</span>
+      <button class="toggle-switch" id="toggle-dyslexia" onclick="toggleDyslexia()"></button>
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">🔍 Larger Text</span>
+      <button class="toggle-switch" id="toggle-large" onclick="toggleLargeText()"></button>
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">🌙 Bedtime Music</span>
+      <button class="toggle-switch" id="toggle-music" onclick="toggleBedtimeMusic()"></button>
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">▶️ Autoplay Story</span>
+      <button class="toggle-switch" id="toggle-autoplay" onclick="toggleAutoplay()"></button>
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">🌿 Forest Sounds</span>
+      <button class="toggle-switch on" id="toggle-ambient" onclick="toggleAmbient()"></button>
+    </div>
+    <button class="settings-close" onclick="toggleSettings()">Done ✓</button>
+  </div>
+</div>
+
+<!-- ============================================
+     STORY CONTAINER
+     ============================================ -->
+<div id="story-container">
+  <!-- Top Controls -->
+  <div class="top-controls">
+    <button class="ctrl-btn" id="btn-mute" onclick="toggleMute()" title="Mute/Unmute">🔊</button>
+    <button class="ctrl-btn" id="btn-settings-story" onclick="toggleSettings()" title="Settings">⚙️</button>
+    <button class="ctrl-btn" id="btn-home" onclick="goHome()" title="Home">🏠</button>
+  </div>
+
+  <!-- Narration Controls -->
+  <div class="narration-controls" id="narration-controls" style="display:none;">
+    <button class="ctrl-btn" id="btn-play" onclick="toggleNarration()" title="Play/Pause">▶️</button>
+    <button class="ctrl-btn" id="btn-repeat" onclick="repeatNarration()" title="Repeat">🔄</button>
+  </div>
+
+  <!-- Scene Progress Dots -->
+  <div class="scene-indicator" id="scene-indicator"></div>
+
+  <!-- Scenes will be injected by JS -->
+  <div id="scenes-wrapper"></div>
+
+  <!-- Navigation -->
+  <div class="nav-controls" id="nav-controls">
+    <button class="nav-btn btn-back" id="btn-prev" onclick="prevScene()">◀ Back</button>
+    <button class="nav-btn btn-next" id="btn-next" onclick="nextScene()">Next ▶</button>
+  </div>
+</div>
+
+<!-- ============================================
+     MORAL OVERLAY
+     ============================================ -->
+<div class="moral-overlay" id="moral-overlay">
+  <div class="moral-bg"></div>
+  <div class="moral-stars" id="moral-stars"></div>
+  <div class="moral-card">
+    <div class="moral-heart anim-heartbeat">💛</div>
+    <div class="moral-text">
+      Being kind does not mean letting others control you.<br><br>
+      <span style="font-size:0.85em;opacity:0.85;">It's okay to say NO and walk away. 🌿</span>
+    </div>
+    <button class="moral-continue-btn" onclick="showQuiz()">Continue to Questions ⭐</button>
+  </div>
+</div>
+
+<!-- ============================================
+     QUIZ SECTION
+     ============================================ -->
+<div id="quiz-section">
+  <div class="quiz-container" id="quiz-container"></div>
+</div>
+
+<!-- ============================================
+     JAVASCRIPT
+     ============================================ -->
+<script>
+// ============================================
+// STORY DATA
+// ============================================
+const scenes = [
+  {
+    id: 1,
+    bg: 'day',
+    title: 'A Beautiful Forest',
+    text: 'Deep in a beautiful green forest, there was a little wooden bridge over a sparkling river. Three best friends lived near the bridge.',
+    characters: [
+      { emoji: '🐷', name: 'Pippa', x: '25%', y: '50%', anim: 'char-bounce' },
+      { emoji: '🐰', name: 'Rory', x: '45%', y: '48%', anim: 'char-bounce' },
+      { emoji: '🐻', name: 'Bram', x: '65%', y: '45%', anim: 'char-bounce' }
+    ],
+    narration: 'Deep in a beautiful green forest, there was a little wooden bridge over a sparkling river. Three best friends lived near the bridge. Pippa the Pig was sweet and shy. Rory the Rabbit was full of energy. And Bram the Bear was calm and wise.',
+    voice: 'narrator',
+    showBridge: true,
+    ambientIntensity: 1
+  },
+  {
+    id: 2,
+    bg: 'day',
+    title: 'Pippa, Rory and Bram',
+    text: '<span class="speaker-name speaker-pippa">Pippa</span> the Pig was sweet and shy. <span class="speaker-name speaker-rory">Rory</span> the Rabbit loved to hop and play. <span class="speaker-name speaker-bram">Bram</span> the Bear was calm and wise. Every day, they crossed the bridge together.',
+    characters: [
+      { emoji: '🐷', name: 'Pippa', x: '20%', y: '52%', anim: 'char-bounce' },
+      { emoji: '🐰', name: 'Rory', x: '50%', y: '47%', anim: 'char-bounce' },
+      { emoji: '🐻', name: 'Bram', x: '72%', y: '44%', anim: 'char-bounce' }
+    ],
+    narration: 'Pippa the Pig was sweet and shy. Rory the Rabbit loved to hop and play. Bram the Bear was calm and wise. Every day, they crossed the little bridge together, laughing and singing.',
+    voice: 'narrator',
+    showBridge: true,
+    ambientIntensity: 1
+  },
+  {
+    id: 3,
+    bg: 'day',
+    title: 'Cass Arrives',
+    text: 'One day, a loud crow named <span class="speaker-name speaker-cass">Cass</span> landed on the bridge. <span class="dialogue">"Nobody crosses unless they do something for me first!"</span> he shouted.',
+    characters: [
+      { emoji: '🐦‍⬛', name: 'Cass', x: '45%', y: '35%', anim: 'char-talk', size: '5rem' }
+    ],
+    narration: 'One day, a loud crow named Cass landed right on the middle of the bridge. "Nobody crosses unless they do something for me first!" he shouted in a big, bossy voice.',
+    voice: 'cass',
+    showBridge: true,
+    ambientIntensity: 0.7
+  },
+  {
+    id: 4,
+    bg: 'day',
+    title: 'The Animals Were Afraid',
+    text: 'The forest animals were afraid. One gave berries. One carried heavy sticks. One gave a pretty ribbon. <span class="speaker-name speaker-cass">Cass</span> smiled. <span class="dialogue">"Good!"</span>',
+    characters: [
+      { emoji: '🐿️', name: 'Squirrel', x: '20%', y: '55%', anim: '' },
+      { emoji: '🦆', name: 'Duck', x: '40%', y: '55%', anim: '' },
+      { emoji: '🐭', name: 'Mouse', x: '60%', y: '58%', anim: '' },
+      { emoji: '🐦‍⬛', name: 'Cass', x: '45%', y: '30%', anim: 'char-talk' }
+    ],
+    narration: 'The forest animals were afraid of Cass. A little squirrel gave berries. A duck carried heavy sticks. A tiny mouse gave a pretty ribbon. Cass smiled and said, "Good!"',
+    voice: 'narrator',
+    showBridge: true,
+    ambientIntensity: 0.5
+  },
+  {
+    id: 5,
+    bg: 'day',
+    title: 'Pippa Feels Worried',
+    text: '<span class="speaker-name speaker-pippa">Pippa</span> watched quietly. <span class="dialogue">"Why are they giving him their things?"</span> she whispered. <span class="dialogue">"Because they are scared,"</span> said <span class="speaker-name speaker-rory">Rory</span>.',
+    characters: [
+      { emoji: '🐷', name: 'Pippa', x: '25%', y: '50%', anim: '' },
+      { emoji: '🐰', name: 'Rory', x: '45%', y: '48%', anim: '' },
+      { emoji: '🐻', name: 'Bram', x: '65%', y: '45%', anim: '' }
+    ],
+    narration: 'Pippa watched quietly. "Why are they giving him their things?" she whispered to her friends. "Because they are scared," said Rory softly.',
+    voice: 'pippa',
+    showBridge: false,
+    ambientIntensity: 0.6
+  },
+  {
+    id: 6,
+    bg: 'day',
+    title: 'Cass Demands Rocks',
+    text: 'The next day, <span class="speaker-name speaker-cass">Cass</span> said to <span class="speaker-name speaker-pippa">Pippa</span>, <span class="dialogue">"Carry these rocks for me first!"</span> <span class="dialogue">"They are too heavy,"</span> said Pippa quietly.',
+    characters: [
+      { emoji: '🐦‍⬛', name: 'Cass', x: '55%', y: '38%', anim: 'char-talk', size: '4.5rem' },
+      { emoji: '🐷', name: 'Pippa', x: '30%', y: '52%', anim: '' }
+    ],
+    narration: 'The next day, Cass said to Pippa, "Carry these rocks for me first!" The rocks were big and heavy. "They are too heavy," said Pippa quietly. She felt a heavy feeling in her tummy.',
+    voice: 'cass',
+    showBridge: true,
+    ambientIntensity: 0.4
+  },
+  {
+    id: 7,
+    bg: 'day',
+    title: 'Cass Gets Mean',
+    text: '<span class="speaker-name speaker-cass">Cass</span> said, <span class="dialogue">"If you don\'t help me, I will make trouble for you."</span> <span class="speaker-name speaker-pippa">Pippa</span> felt a heavy rock in her tummy.',
+    characters: [
+      { emoji: '🐦‍⬛', name: 'Cass', x: '55%', y: '35%', anim: 'char-talk', size: '5rem' },
+      { emoji: '🐷', name: 'Pippa', x: '30%', y: '55%', anim: '' }
+    ],
+    narration: 'Cass said in a firm voice, "If you don\'t help me, I will make trouble for you." Pippa felt a heavy rock in her tummy. She felt scared and didn\'t know what to do.',
+    voice: 'cass',
+    showBridge: true,
+    ambientIntensity: 0.3
+  },
+  {
+    id: 8,
+    bg: 'day',
+    title: "Bram's Wise Words",
+    text: 'Then <span class="speaker-name speaker-pippa">Pippa</span> remembered something <span class="speaker-name speaker-bram">Bram</span> once told her: <span class="dialogue">"A kind heart does not mean becoming small for others."</span>',
+    characters: [
+      { emoji: '🐷', name: 'Pippa', x: '35%', y: '50%', anim: '' },
+      { emoji: '🐻', name: 'Bram', x: '60%', y: '42%', anim: 'char-talk' },
+      { emoji: '💛', name: 'heart', x: '48%', y: '25%', anim: 'anim-heartbeat' }
+    ],
+    narration: 'Then Pippa remembered something special. Her friend Bram once told her: "A kind heart does not mean becoming small for others." Those words made Pippa feel a little bit braver inside.',
+    voice: 'bram',
+    showBridge: false,
+    ambientIntensity: 0.7
+  },
+  {
+    id: 9,
+    bg: 'day',
+    title: 'Pippa Speaks Up',
+    text: '<span class="speaker-name speaker-pippa">Pippa</span> looked at <span class="speaker-name speaker-cass">Cass</span> and asked, <span class="dialogue">"Why should I carry your rocks?"</span> Cass was surprised. No one had ever asked him that before.',
+    characters: [
+      { emoji: '🐷', name: 'Pippa', x: '30%', y: '50%', anim: 'char-talk' },
+      { emoji: '🐦‍⬛', name: 'Cass', x: '60%', y: '40%', anim: '' }
+    ],
+    narration: 'Pippa took a deep breath. She looked at Cass and asked in a clear voice, "Why should I carry your rocks?" Cass was very surprised! No one had ever asked him that before.',
+    voice: 'pippa',
+    showBridge: true,
+    ambientIntensity: 0.8
+  },
+  {
+    id: 10,
+    bg: 'day',
+    title: 'Walking Away Bravely',
+    text: '<span class="dialogue">"I said DO IT!"</span> <span class="speaker-name speaker-cass">Cass</span> shouted. But <span class="speaker-name speaker-pippa">Pippa</span> took a deep breath and walked away. Calmly.',
+    characters: [
+      { emoji: '🐦‍⬛', name: 'Cass', x: '60%', y: '35%', anim: 'char-talk', size: '4.5rem' },
+      { emoji: '🐷', name: 'Pippa', x: '25%', y: '52%', anim: '' }
+    ],
+    narration: '"I said DO IT!" Cass shouted loudly. But Pippa did something very brave. She took a deep, slow breath... and she walked away. Calmly. Quietly. Bravely.',
+    voice: 'narrator',
+    showBridge: true,
+    ambientIntensity: 0.6
+  },
+  {
+    id: 11,
+    bg: 'day',
+    title: "Bram's Comfort",
+    text: '<span class="speaker-name speaker-pippa">Pippa</span> told <span class="speaker-name speaker-bram">Bram</span> what happened. Bram said, <span class="dialogue">"Sometimes others use fear to feel big. Someone else\'s anger is not your job."</span>',
+    characters: [
+      { emoji: '🐷', name: 'Pippa', x: '35%', y: '52%', anim: '' },
+      { emoji: '🐻', name: 'Bram', x: '58%', y: '44%', anim: 'char-talk' }
+    ],
+    narration: 'Pippa told Bram everything that happened. Bram smiled gently and said, "Sometimes others use fear to feel big. But remember — someone else\'s anger is not your job." Pippa felt safe.',
+    voice: 'bram',
+    showBridge: false,
+    ambientIntensity: 0.8
+  },
+  {
+    id: 12,
+    bg: 'day',
+    title: 'Crossing Together',
+    text: 'The next day, <span class="speaker-name speaker-pippa">Pippa</span> walked across the bridge with her friends. The other animals stopped giving <span class="speaker-name speaker-cass">Cass</span> their things too.',
+    characters: [
+      { emoji: '🐷', name: 'Pippa', x: '25%', y: '50%', anim: 'char-bounce' },
+      { emoji: '🐰', name: 'Rory', x: '40%', y: '48%', anim: 'char-bounce' },
+      { emoji: '🐻', name: 'Bram', x: '55%', y: '45%', anim: 'char-bounce' },
+      { emoji: '🐿️', name: 'Squirrel', x: '70%', y: '52%', anim: 'char-bounce' }
+    ],
+    narration: 'The next day, Pippa walked across the bridge with all her friends. Rory hopped beside her. Bram walked behind her. And the other animals stopped giving Cass their things too. Together, they were all brave!',
+    voice: 'narrator',
+    showBridge: true,
+    ambientIntensity: 1
+  },
+  {
+    id: 13,
+    bg: 'sunset',
+    title: 'Feeling Tall Inside',
+    text: '<span class="speaker-name speaker-pippa">Pippa</span> felt taller inside. She learned that she can be kind without letting others control her. 🌅',
+    characters: [
+      { emoji: '🐷', name: 'Pippa', x: '35%', y: '48%', anim: 'char-bounce' },
+      { emoji: '🐰', name: 'Rory', x: '50%', y: '46%', anim: 'char-bounce' },
+      { emoji: '🐻', name: 'Bram', x: '63%', y: '43%', anim: 'char-bounce' }
+    ],
+    narration: 'Pippa felt taller inside. She learned something very important. She can be kind... and still be strong. She can say no... and still be a good friend. And that made her feel like the bravest little pig in the whole forest.',
+    voice: 'narrator',
+    showBridge: true,
+    ambientIntensity: 1,
+    isEnding: true
+  }
+];
+
+const quizData = [
+  {
+    question: "Was Pippa weak or strong when she walked away from Cass?",
+    emoji: "💪",
+    options: ["Very strong!", "Very weak", "I don't know"],
+    correct: 0,
+    feedback: "That's right! Walking away from someone who is being mean takes a LOT of courage. Pippa was very, very strong! 🌟"
+  },
+  {
+    question: "What did Bram say about having a kind heart?",
+    emoji: "💛",
+    options: ["A kind heart means saying yes to everything", "A kind heart does not mean becoming small for others", "A kind heart means giving everything away"],
+    correct: 1,
+    feedback: "Exactly! Being kind is wonderful, but you never have to make yourself small just to make someone else happy. 🐻💛"
+  },
+  {
+    question: "If someone tells you to do something that feels wrong, what can you do?",
+    emoji: "🤔",
+    options: ["Say 'no' and walk away", "Do it anyway", "Hide and cry"],
+    correct: 0,
+    feedback: "Yes! It is always okay to say 'no' if something feels wrong. You can walk away and tell someone you trust. You are allowed to feel safe! 🌿"
+  },
+  {
+    question: "Why did the other animals give Cass their things?",
+    emoji: "😟",
+    options: ["Because they liked Cass", "Because they were scared", "Because Cass asked nicely"],
+    correct: 1,
+    feedback: "That's right. The animals were scared. But nobody should have to give things away just because they feel scared. Pippa showed them that it's okay to be brave! ⭐"
+  },
+  {
+    question: "What is the most important thing Pippa learned?",
+    emoji: "🌟",
+    options: ["To never be kind again", "You can be kind AND strong at the same time", "To always do what others tell you"],
+    correct: 1,
+    feedback: "Wonderful! You can be the kindest person and still stand up for yourself. Kindness and bravery go together like sunshine and flowers! 🌻💛"
+  }
+];
+
+// ============================================
+// STATE
+// ============================================
+let currentScene = 0;
+let storyMode = 'readMyself'; // 'readToMe' or 'readMyself'
+let isMuted = false;
+let isAutoplay = false;
+let ambientEnabled = true;
+let bedtimeMusicEnabled = false;
+let isSpeaking = false;
+let currentUtterance = null;
+let audioCtx = null;
+let ambientNodes = {};
+let quizIndex = 0;
+let score = 0;
+
+// ============================================
+// INITIALIZATION
+// ============================================
+window.addEventListener('load', () => {
+  // Simulate loading
+  let progress = 0;
+  const loadingBar = document.getElementById('loading-bar');
+  const loadInterval = setInterval(() => {
+    progress += Math.random() * 15 + 5;
+    if (progress >= 100) {
+      progress = 100;
+      clearInterval(loadInterval);
+      setTimeout(() => {
+        document.getElementById('loading-screen').classList.add('hidden');
+        document.getElementById('title-screen').style.display = '';
+        setTimeout(() => document.getElementById('title-screen').style.opacity = '1', 50);
+      }, 400);
+    }
+    loadingBar.style.width = progress + '%';
+  }, 200);
+
+  // Build scene indicator dots
+  buildSceneIndicator();
+  buildScenes();
+  populateMoralStars();
+});
+
+// ============================================
+// BUILD SCENES
+// ============================================
+function buildSceneIndicator() {
+  const container = document.getElementById('scene-indicator');
+  for (let i = 0; i < scenes.length; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'scene-dot' + (i === 0 ? ' active' : '');
+    dot.dataset.index = i;
+    container.appendChild(dot);
+  }
+}
+
+function buildScenes() {
+  const wrapper = document.getElementById('scenes-wrapper');
+  scenes.forEach((scene, idx) => {
+    const el = document.createElement('div');
+    el.className = 'scene' + (idx === 0 ? ' active' : '');
+    el.id = 'scene-' + idx;
+    el.innerHTML = buildSceneHTML(scene, idx);
+    wrapper.appendChild(el);
+  });
+}
+
+function buildSceneHTML(scene, idx) {
+  const isSunset = scene.bg === 'sunset';
+  const skyClass = isSunset ? 'sky-sunset' : 'sky-day';
+
+  // Build characters
+  let charsHTML = '';
+  (scene.characters || []).forEach(c => {
+    const size = c.size || '4rem';
+    charsHTML += `<div class="character ${c.anim}" style="left:${c.x};top:${c.y};font-size:${size};">${c.emoji}</div>`;
+  });
+
+  // Bridge
+  let bridgeHTML = '';
+  if (scene.showBridge) {
+    bridgeHTML = `
+      <div class="bridge-structure">
+        <div class="bridge-post" style="left:0"></div>
+        <div class="bridge-post" style="left:25%"></div>
+        <div class="bridge-post" style="left:50%"></div>
+        <div class="bridge-post" style="left:75%"></div>
+        <div class="bridge-post" style="right:0"></div>
+        <div class="bridge-rail"></div>
+        <div class="bridge-deck"></div>
+      </div>`;
+  }
+
+  // Fireflies for later scenes
+  let firefliesHTML = '';
+  if (isSunset || idx > 10) {
+    for (let i = 0; i < 12; i++) {
+      const x = Math.random() * 90 + 5;
+      const y = Math.random() * 60 + 10;
+      const delay = Math.random() * 4;
+      const dur = 3 + Math.random() * 3;
+      firefliesHTML += `<div class="firefly" style="left:${x}%;top:${y}%;animation-delay:${delay}s;animation-duration:${dur}s;"></div>`;
+    }
+  }
+
+  // Floating leaves
+  let leavesHTML = '';
+  for (let i = 0; i < 4; i++) {
+    const x = Math.random() * 80 + 10;
+    const dur = 10 + Math.random() * 8;
+    const delay = Math.random() * dur;
+    const emoji = Math.random() > 0.5 ? '🍃' : '🍂';
+    const dx = (Math.random() - 0.5) * 200;
+    const dy = 300 + Math.random() * 200;
+    const rot = 360 + Math.random() * 360;
+    leavesHTML += `<div class="floating-leaf" style="left:${x}%;top:-5%;font-size:${1 + Math.random()}rem;animation-duration:${dur}s;animation-delay:-${delay}s;--leaf-dx:${dx}px;--leaf-dy:${dy}px;--leaf-rot:${rot}deg;">${emoji}</div>`;
+  }
+
+  // CSS Trees (positioned randomly)
+  let treesHTML = '';
+  const treeCount = 6 + Math.floor(Math.random() * 4);
+  for (let i = 0; i < treeCount; i++) {
+    const left = (i / treeCount) * 100 + Math.random() * 8 - 4;
+    const h = 40 + Math.random() * 60;
+    const cw = 30 + Math.random() * 40;
+    const ch = 25 + Math.random() * 35;
+    const shade = 30 + Math.floor(Math.random() * 60);
+    const g = isSunset ? `rgb(${shade+40}, ${shade+20}, ${shade-10})` : `rgb(${shade-10}, ${shade+70}, ${shade-10})`;
+    treesHTML += `<div class="css-tree" style="left:${left}%;"><div class="canopy-el" style="width:${cw}px;height:${ch}px;background:${g};border-radius:50%;"></div><div class="trunk-el" style="height:${h * 0.4}px;"></div></div>`;
+  }
+
+  // Grass
+  let grassHTML = '';
+  for (let i = 0; i < 30; i++) {
+    const gl = Math.random() * 100;
+    const gh = 8 + Math.random() * 15;
+    const gdelay = Math.random() * 3;
+    grassHTML += `<div class="grass-blade" style="left:${gl}%;height:${gh}px;animation-delay:${gdelay}s;"></div>`;
+  }
+
+  // Wrap text with spans for highlighting
+  const wrappedText = wrapWordsForHighlight(scene.text, idx);
+
+  return `
+    <div class="forest-bg">
+      <div class="sky-layer ${skyClass}"></div>
+      <div class="cloud cloud-1"></div>
+      <div class="cloud cloud-2"></div>
+      <div class="cloud cloud-3"></div>
+      <div class="hills-back"></div>
+      <div class="hills-front"></div>
+      <div class="tree-layer">${treesHTML}</div>
+      <div class="ground-layer">${grassHTML}</div>
+      <div class="river"><div class="river-shimmer"></div></div>
+      ${bridgeHTML}
+      ${charsHTML}
+      ${firefliesHTML}
+      ${leavesHTML}
+    </div>
+    <div class="text-panel">
+      <div class="story-text" id="story-text-${idx}">${wrappedText}</div>
+    </div>
+  `;
+}
+
+function wrapWordsForHighlight(html, sceneIdx) {
+  // We wrap plain text words in spans, leaving HTML tags intact
+  let wordIdx = 0;
+  return html.replace(/(<[^>]+>)|([^<\s]+)/g, (match, tag, word) => {
+    if (tag) return tag;
+    return `<span class="highlight-word" data-scene="${sceneIdx}" data-word="${wordIdx++}">${word}</span>`;
+  });
+}
+
+// ============================================
+// STORY START
+// ============================================
+function startStory(mode) {
+  storyMode = mode;
+  document.getElementById('title-screen').style.display = 'none';
+  document.getElementById('story-container').classList.add('active');
+
+  if (mode === 'readToMe') {
+    document.getElementById('narration-controls').style.display = 'flex';
+  }
+
+  currentScene = 0;
+  updateScene();
+
+  // Initialize audio
+  initAudio();
+
+  // Start narration if readToMe
+  if (mode === 'readToMe') {
+    setTimeout(() => narrateScene(currentScene), 1500);
+  }
+}
+
+// ============================================
+// SCENE NAVIGATION
+// ============================================
+function updateScene() {
+  // Update scene visibility
+  document.querySelectorAll('.scene').forEach((el, i) => {
+    el.classList.toggle('active', i === currentScene);
+  });
+
+  // Update dots
+  document.querySelectorAll('.scene-dot').forEach((dot, i) => {
+    dot.classList.remove('active', 'completed');
+    if (i === currentScene) dot.classList.add('active');
+    else if (i < currentScene) dot.classList.add('completed');
+  });
+
+  // Update nav buttons
+  document.getElementById('btn-prev').style.visibility = currentScene === 0 ? 'hidden' : 'visible';
+  const nextBtn = document.getElementById('btn-next');
+  if (currentScene === scenes.length - 1) {
+    nextBtn.textContent = '🌟 The End';
+  } else {
+    nextBtn.innerHTML = 'Next ▶';
+  }
+
+  // Play sound effects
+  if (!isMuted) {
+    playSFX('whoosh');
+  }
+}
+
+function nextScene() {
+  stopSpeaking();
+  if (currentScene < scenes.length - 1) {
+    currentScene++;
+    updateScene();
+    if (storyMode === 'readToMe') {
+      setTimeout(() => narrateScene(currentScene), 800);
+    }
+  } else {
+    // End of story → show moral
+    showMoral();
+  }
+}
+
+function prevScene() {
+  stopSpeaking();
+  if (currentScene > 0) {
+    currentScene--;
+    updateScene();
+    if (storyMode === 'readToMe') {
+      setTimeout(() => narrateScene(currentScene), 800);
+    }
+  }
+}
+
+function goHome() {
+  stopSpeaking();
+  stopAmbient();
+  document.getElementById('story-container').classList.remove('active');
+  document.getElementById('title-screen').style.display = '';
+  document.getElementById('moral-overlay').classList.remove('active');
+  document.getElementById('quiz-section').classList.remove('active');
+  currentScene = 0;
+  updateScene();
+}
+
+// ============================================
+// TEXT-TO-SPEECH NARRATION
+// ============================================
+function getVoiceSettings(voiceType) {
+  // Different voice params for each character
+  const settings = {
+    narrator: { pitch: 1.0, rate: 0.85, volume: 1.0 },
+    pippa: { pitch: 1.4, rate: 0.82, volume: 0.9 },
+    rory: { pitch: 1.2, rate: 1.0, volume: 1.0 },
+    bram: { pitch: 0.7, rate: 0.75, volume: 1.0 },
+    cass: { pitch: 0.9, rate: 0.95, volume: 1.0 }
+  };
+  return settings[voiceType] || settings.narrator;
+}
+
+function narrateScene(sceneIdx) {
+  if (isMuted) return;
+  const scene = scenes[sceneIdx];
+  if (!scene) return;
+
+  stopSpeaking();
+
+  const text = scene.narration || '';
+  if (!text) return;
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  const voiceSettings = getVoiceSettings(scene.voice);
+
+  utterance.pitch = voiceSettings.pitch;
+  utterance.rate = voiceSettings.rate;
+  utterance.volume = voiceSettings.volume;
+  utterance.lang = 'en-US';
+
+  // Try to find a good voice
+  const voices = speechSynthesis.getVoices();
+  if (voices.length > 0) {
+    // Prefer English voices
+    const englishVoices = voices.filter(v => v.lang.startsWith('en'));
+    if (englishVoices.length > 0) {
+      utterance.voice = englishVoices[0];
+    }
+  }
+
+  // Word highlighting
+  let wordIndex = 0;
+  const wordElements = document.querySelectorAll(`[data-scene="${sceneIdx}"]`);
+
+  utterance.onboundary = function(event) {
+    if (event.name === 'word' && wordIndex < wordElements.length) {
+      // Clear previous highlights
+      wordElements.forEach(w => w.classList.remove('active'));
+      // Highlight current word
+      if (wordElements[wordIndex]) {
+        wordElements[wordIndex].classList.add('active');
+      }
+      wordIndex++;
+    }
+  };
+
+  utterance.onend = function() {
+    isSpeaking = false;
+    wordElements.forEach(w => w.classList.remove('active'));
+    document.getElementById('btn-play').textContent = '▶️';
+
+    // Auto-advance if autoplay
+    if (isAutoplay && currentScene < scenes.length - 1) {
+      setTimeout(() => nextScene(), 1500);
+    } else if (isAutoplay && currentScene === scenes.length - 1) {
+      setTimeout(() => showMoral(), 2000);
+    }
+  };
+
+  utterance.onstart = function() {
+    isSpeaking = true;
+    document.getElementById('btn-play').textContent = '⏸️';
+  };
+
+  currentUtterance = utterance;
+  speechSynthesis.speak(utterance);
+}
+
+function toggleNarration() {
+  if (isSpeaking) {
+    speechSynthesis.pause();
+    isSpeaking = false;
+    document.getElementById('btn-play').textContent = '▶️';
+  } else if (speechSynthesis.paused) {
+    speechSynthesis.resume();
+    isSpeaking = true;
+    document.getElementById('btn-play').textContent = '⏸️';
+  } else {
+    narrateScene(currentScene);
+  }
+}
+
+function repeatNarration() {
+  stopSpeaking();
+  setTimeout(() => narrateScene(currentScene), 300);
+}
+
+function stopSpeaking() {
+  speechSynthesis.cancel();
+  isSpeaking = false;
+  const playBtn = document.getElementById('btn-play');
+  if (playBtn) playBtn.textContent = '▶️';
+}
+
+// Ensure voices are loaded
+speechSynthesis.onvoiceschanged = function() {};
+
+// ============================================
+// AUDIO ENGINE (Web Audio API)
+// ============================================
+function initAudio() {
+  if (audioCtx) return;
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  } catch (e) {
+    console.log('Audio not available');
+  }
+}
+
+function playSFX(type) {
+  if (!audioCtx || isMuted) return;
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    switch (type) {
+      case 'whoosh':
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+        osc.start(audioCtx.currentTime);
+        osc.stop(audioCtx.currentTime + 0.3);
+        break;
+      case 'magic':
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.5);
+        gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+        osc.start(audioCtx.currentTime);
+        osc.stop(audioCtx.currentTime + 0.6);
+        break;
+      case 'correct':
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.15);
+        osc.frequency.setValueAtTime(784, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+        osc.start(audioCtx.currentTime);
+        osc.stop(audioCtx.currentTime + 0.5);
+        break;
+      case 'stars':
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1600, audioCtx.currentTime + 0.8);
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1);
+        osc.start(audioCtx.currentTime);
+        osc.stop(audioCtx.currentTime + 1);
+        break;
+    }
+  } catch (e) {}
+}
+
+function playAmbientNoise() {
+  if (!audioCtx || !ambientEnabled || isMuted) return;
+  try {
+    // Simple ambient: filtered noise for wind / river
+    const bufferSize = audioCtx.sampleRate * 2;
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * 0.015;
+    }
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+    source.loop = true;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 600;
+
+    const gainNode = audioCtx.createGain();
+    gainNode.gain.value = 0.3;
+
+    source.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    source.start();
+
+    ambientNodes.source = source;
+    ambientNodes.gain = gainNode;
+  } catch (e) {}
+}
+
+function stopAmbient() {
+  if (ambientNodes.source) {
+    try { ambientNodes.source.stop(); } catch (e) {}
+    ambientNodes = {};
+  }
+}
+
+function playBedtimeMusic() {
+  if (!audioCtx || isMuted) return;
+  try {
+    // Simple lullaby-like melody using oscillators
+    const notes = [523, 587, 659, 523, 587, 659, 784, 659, 587, 523];
+    const baseTime = audioCtx.currentTime;
+
+    notes.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      gain.gain.setValueAtTime(0, baseTime + i * 0.8);
+      gain.gain.linearRampToValueAtTime(0.04, baseTime + i * 0.8 + 0.1);
+      gain.gain.linearRampToValueAtTime(0, baseTime + i * 0.8 + 0.75);
+      osc.start(baseTime + i * 0.8);
+      osc.stop(baseTime + i * 0.8 + 0.8);
+    });
+  } catch (e) {}
+}
+
+// ============================================
+// SETTINGS TOGGLES
+// ============================================
+function toggleSettings() {
+  const panel = document.getElementById('settings-panel');
+  panel.classList.toggle('show');
+}
+
+function toggleDyslexia() {
+  document.body.classList.toggle('dyslexia-mode');
+  document.getElementById('toggle-dyslexia').classList.toggle('on');
+}
+
+function toggleLargeText() {
+  document.body.classList.toggle('large-text');
+  document.getElementById('toggle-large').classList.toggle('on');
+}
+
+function toggleBedtimeMusic() {
+  bedtimeMusicEnabled = !bedtimeMusicEnabled;
+  document.getElementById('toggle-music').classList.toggle('on');
+  if (bedtimeMusicEnabled) {
+    initAudio();
+    playBedtimeMusic();
+  }
+}
+
+function toggleAutoplay() {
+  isAutoplay = !isAutoplay;
+  document.getElementById('toggle-autoplay').classList.toggle('on');
+}
+
+function toggleAmbient() {
+  ambientEnabled = !ambientEnabled;
+  document.getElementById('toggle-ambient').classList.toggle('on');
+  if (ambientEnabled) {
+    initAudio();
+    playAmbientNoise();
+  } else {
+    stopAmbient();
+  }
+}
+
+function toggleMute() {
+  isMuted = !isMuted;
+  const btn = document.getElementById('btn-mute');
+  btn.textContent = isMuted ? '🔇' : '🔊';
+  if (isMuted) {
+    stopSpeaking();
+    stopAmbient();
+  }
+}
+
+// ============================================
+// MORAL SCREEN
+// ============================================
+function populateMoralStars() {
+  const container = document.getElementById('moral-stars');
+  for (let i = 0; i < 30; i++) {
+    const star = document.createElement('div');
+    star.className = 'moral-star';
+    star.textContent = '✨';
+    star.style.left = Math.random() * 90 + 5 + '%';
+    star.style.top = Math.random() * 50 + '%';
+    star.style.animationDelay = Math.random() * 3 + 's';
+    star.style.animationDuration = (2 + Math.random() * 3) + 's';
+    star.style.fontSize = (0.8 + Math.random() * 1.2) + 'rem';
+    container.appendChild(star);
+  }
+}
+
+function showMoral() {
+  document.getElementById('story-container').classList.remove('active');
+  document.getElementById('moral-overlay').classList.add('active');
+  if (!isMuted) {
+    playSFX('magic');
+    // Narrate the moral
+    if (storyMode === 'readToMe') {
+      const utt = new SpeechSynthesisUtterance('Being kind does not mean letting others control you. It is okay to say no and walk away.');
+      utt.pitch = 1.0;
+      utt.rate = 0.8;
+      utt.volume = 1.0;
+      speechSynthesis.speak(utt);
+    }
+  }
+}
+
+// ============================================
+// QUIZ
+// ============================================
+function showQuiz() {
+  document.getElementById('moral-overlay').classList.remove('active');
+  document.getElementById('quiz-section').classList.add('active');
+  quizIndex = 0;
+  score = 0;
+  renderQuiz();
+}
+
+function renderQuiz() {
+  const container = document.getElementById('quiz-container');
+  if (quizIndex >= quizData.length) {
+    renderReward();
+    return;
+  }
+  const q = quizData[quizIndex];
+  container.innerHTML = `
+    <div class="quiz-card">
+      <div class="quiz-emoji">${q.emoji}</div>
+      <div class="quiz-question-number">Question ${quizIndex + 1} of ${quizData.length}</div>
+      <div class="quiz-question">${q.question}</div>
+      <div class="quiz-options" id="quiz-options">
+        ${q.options.map((opt, i) => `
+          <button class="quiz-option" data-index="${i}" onclick="answerQuiz(${i})">${opt}</button>
+        `).join('')}
+      </div>
+      <div id="quiz-feedback-area"></div>
+    </div>
+  `;
+}
+
+function answerQuiz(selected) {
+  const q = quizData[quizIndex];
+  const options = document.querySelectorAll('.quiz-option');
+  const feedbackArea = document.getElementById('quiz-feedback-area');
+
+  // Disable all options
+  options.forEach(opt => {
+    opt.style.pointerEvents = 'none';
+    const idx = parseInt(opt.dataset.index);
+    if (idx === q.correct) {
+      opt.classList.add('correct');
+    } else if (idx === selected && selected !== q.correct) {
+      opt.classList.add('also-ok');
+    }
+  });
+
+  // Always positive feedback
+  if (selected === q.correct) {
+    score++;
+    if (!isMuted) playSFX('correct');
+    feedbackArea.innerHTML = `
+      <div class="quiz-feedback positive">⭐ ${q.feedback}</div>
+      <button class="quiz-next-btn" onclick="nextQuiz()">Next Question ▶</button>
+    `;
+  } else {
+    feedbackArea.innerHTML = `
+      <div class="quiz-feedback positive">That's a great try! 💛 ${q.feedback}</div>
+      <button class="quiz-next-btn" onclick="nextQuiz()">Next Question ▶</button>
+    `;
+  }
+
+  // Narrate feedback
+  if (storyMode === 'readToMe' && !isMuted) {
+    const utt = new SpeechSynthesisUtterance(q.feedback);
+    utt.pitch = 1.1;
+    utt.rate = 0.85;
+    speechSynthesis.speak(utt);
+  }
+}
+
+function nextQuiz() {
+  quizIndex++;
+  renderQuiz();
+}
+
+function renderReward() {
+  if (!isMuted) playSFX('stars');
+  const container = document.getElementById('quiz-container');
+  const hearts = '💛'.repeat(score) + '🤍'.repeat(quizData.length - score);
+  container.innerHTML = `
+    <div class="reward-screen">
+      <div class="reward-stars">🌟⭐🌟⭐🌟</div>
+      <div class="reward-title">You Did Amazing!</div>
+      <div class="reward-message">
+        You answered ${score} out of ${quizData.length} questions!<br><br>
+        You are kind, brave, and strong —<br>just like Pippa! 🐷💛
+      </div>
+      <div class="reward-hearts">${hearts}</div>
+      <button class="reward-btn" onclick="goHome()">🏠 Back to Start</button>
+    </div>
+  `;
+
+  if (storyMode === 'readToMe' && !isMuted) {
+    const utt = new SpeechSynthesisUtterance('You did amazing! You are kind, brave, and strong, just like Pippa!');
+    utt.pitch = 1.2;
+    utt.rate = 0.85;
+    speechSynthesis.speak(utt);
+  }
+}
+
+// ============================================
+// KEYBOARD NAVIGATION
+// ============================================
+document.addEventListener('keydown', (e) => {
+  if (document.getElementById('story-container').classList.contains('active')) {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+      e.preventDefault();
+      nextScene();
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      prevScene();
+    }
+  }
+});
+
+// ============================================
+// TOUCH / SWIPE SUPPORT
+// ============================================
+let touchStartX = 0;
+document.addEventListener('touchstart', (e) => {
+  touchStartX = e.touches[0].clientX;
+}, { passive: true });
+document.addEventListener('touchend', (e) => {
+  if (!document.getElementById('story-container').classList.contains('active')) return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 60) {
+    if (dx < 0) nextScene();
+    else prevScene();
+  }
+}, { passive: true });
+</script>
+</body>
+</html>
